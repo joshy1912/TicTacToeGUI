@@ -1,6 +1,6 @@
 package org.example;
-import  java.awt.*;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -8,33 +8,59 @@ public class TicTacToeGUI extends JFrame {
     private JButton[][] buttons;
     private char currentPlayer;
     private boolean gameOver;
+    private int playerXScore;
+    private int playerOScore;
+    private JLabel playerXLabel;
+    private JLabel playerOLabel;
 
     public TicTacToeGUI() {
         setTitle("Tic Tac Toe");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(300, 300);
+        setSize(300, 400);
         setLocationRelativeTo(null);
-        setLayout(new GridLayout(3, 3));
+        setLayout(new BorderLayout());
+
+        JPanel boardPanel = new JPanel();
+        boardPanel.setLayout(new GridLayout(3, 3));
+        add(boardPanel, BorderLayout.CENTER);
 
         buttons = new JButton[3][3];
         currentPlayer = 'X';
         gameOver = false;
 
-        initializeButtons();
+        initializeButtons(boardPanel);
+        initializeScorePanel();
 
         setVisible(true);
     }
 
-    private void initializeButtons() {
+    private void initializeButtons(JPanel boardPanel) {
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
                 JButton button = new JButton();
                 button.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 48));
                 button.addActionListener(new ButtonClickListener(row, col));
                 buttons[row][col] = button;
-                add(button);
+                boardPanel.add(button);
             }
         }
+    }
+
+    private void initializeScorePanel() {
+        JPanel scorePanel = new JPanel();
+        scorePanel.setLayout(new GridLayout(2, 2));
+
+        JLabel playerXText = new JLabel("Player X:");
+        playerXLabel = new JLabel("0");
+        JLabel playerOText = new JLabel("Player O:");
+        playerOLabel = new JLabel("0");
+
+        scorePanel.add(playerXText);
+        scorePanel.add(playerXLabel);
+        scorePanel.add(playerOText);
+        scorePanel.add(playerOLabel);
+
+        add(scorePanel, BorderLayout.SOUTH);
     }
 
     private void makeMove(int row, int col) {
@@ -42,6 +68,7 @@ public class TicTacToeGUI extends JFrame {
             buttons[row][col].setText(String.valueOf(currentPlayer));
             if (checkWin()) {
                 JOptionPane.showMessageDialog(this, "Player " + currentPlayer + " wins!");
+                updateScore();
                 resetGame();
             } else if (isBoardFull()) {
                 JOptionPane.showMessageDialog(this, "It's a tie!");
@@ -96,6 +123,16 @@ public class TicTacToeGUI extends JFrame {
         return true;
     }
 
+    private void updateScore() {
+        if (currentPlayer == 'X') {
+            playerXScore++;
+            playerXLabel.setText(String.valueOf(playerXScore));
+        } else {
+            playerOScore++;
+            playerOLabel.setText(String.valueOf(playerOScore));
+        }
+    }
+
     private void resetGame() {
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
@@ -131,4 +168,4 @@ public class TicTacToeGUI extends JFrame {
             }
         });
     }
-}}
+}
